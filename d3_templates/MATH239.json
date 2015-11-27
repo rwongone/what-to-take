@@ -1,0 +1,34 @@
+{
+  "course_code": "MATH239",
+  "title": "Introduction to Combinatorics",
+  "prerequisite_groups": [
+    {
+      "prerequisites" : [
+        {
+          "course_code": "MATH106",
+          "title": "A"
+        },
+        {
+          "course_code": "MATH136",
+          "title": "B"
+        },
+        {
+          "course_code": "MATH146",
+          "title": "C"
+        }
+      ]
+    },
+    {
+      "prerequisites": [
+        {
+          "course_code": "MATH135",
+          "title": "Algebra"
+        },
+        {
+          "course_code": "MATH145",
+          "title": "Algebra ++"
+        }
+      ]
+    }
+  ]
+}
