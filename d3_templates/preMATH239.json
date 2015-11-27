@@ -1,9 +1,0 @@
-{
-  "subject": "MATH",
-  "catalog_number": "239",
-  "title": "Introduction to Combinatorics",
-  "prerequisites_parsed": [
-    [1, "MATH106", "MATH136", "MATH146"],
-    [1, "MATH135", "MATH145"]
-  ]
-}

@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>MATH239</title>
+    <title>{{ course_code }}</title>
     <style>
       svg {
         border: 1px solid #eee;
@@ -58,8 +58,10 @@ var vis = d3.select('body').append('svg')
   .append('g')
     .attr('transform', 'translate(' + (width - r) / 2 + ',' + (height - r) / 2 + ')');
 
-d3.json('MATH239.json', function(error, data) {
+d3.json('/json/{{ course_code }}.json', function(error, data) {
   if (error) return console.warn(error);
+
+  console.log(data)
 
   var root = data
   var node = root
