@@ -19,6 +19,8 @@ collection = client.courses.prereqs
 
 app = Flask(__name__)
 
+DEBUG = False
+
 class Encoder(json.JSONEncoder):
   def default(self, obj):
     if isinstance(obj, ObjectId):
@@ -60,6 +62,7 @@ def construct_json(course_code):
   if in_db:
     return in_db
 
+
   (subject, catalog_no) = course_code_r.match(course_code).groups()
   course_details = uw.course(subject, catalog_no)
   course_prereqs = uw.course_prerequistes(subject, catalog_no)
@@ -70,26 +73,30 @@ def construct_json(course_code):
   }
 
   prereq_group_list = course_prereqs.get("prerequisites_parsed")
+  if DEBUG:
+    print(course_code)
+    print "\t" + str(prereq_group_list)
   if (prereq_group_list):
-    # print course_code + " prerequisites are:"
-    # print prereq_group_list
     data["prerequisite_groups"] = []
     for prereq_group in prereq_group_list:
-      prereq_group_data = {
-        "prerequisites": []
-      }
-      if type(prereq_group) is str or type(prereq_group) is unicode:
-        prereq_group_data["prerequisites"].append(construct_json(prereq_group))
-      elif type(prereq_group) is int:
+      if type(prereq_group) is str or type(prereq_group) is unicode or type(prereq_group) is int:
         continue
       else:
+        prereq_group_data = {
+          "prerequisites": []
+        }
         for prereq in prereq_group:
           if type(prereq) is int:
             continue
-          prereq_group_data["prerequisites"].append(construct_json(prereq))
-      data["prerequisite_groups"].append(prereq_group_data)
+          elif type(prereq) is list:
+            for p in prereq:
+              if type(p) is int:
+                continue
+              prereq_group_data["prerequisites"].append(construct_json(p))
+          else:
+            prereq_group_data["prerequisites"].append(construct_json(prereq))
+        data["prerequisite_groups"].append(prereq_group_data)
   else:
-    # print course_code + " has no prerequisites."
     pass
   collection.insert_one(data)
   return data
@@ -120,8 +127,9 @@ def prereq_graph(course_code):
 
 @app.route("/graph/<course_code>")
 def do_it(course_code):
+  course_code = course_code.upper()
   if course_code_r.match(course_code):
-    prereq_graph(course_code.upper())
+    prereq_graph(course_code)
     return render_template('template.html', course_code=course_code)
   else:
     return None
@@ -131,5 +139,5 @@ def send_json(path):
   return send_from_directory("json", path)
 
 if __name__ == "__main__":
-  app.debug = True
+  app.debug = DEBUG
   app.run()
